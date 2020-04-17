@@ -39,6 +39,10 @@ type Identifier struct {
 	Value string
 }
 
+func (i *Identifier) TokenLiteral() string {
+	return i.Token.Literal
+}
+
 func (ls *LetStatement) statementNode() {}
 func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
