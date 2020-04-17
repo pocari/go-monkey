@@ -35,7 +35,7 @@ type LetStatement struct {
 }
 
 type Identifier struct {
-	Token token.Token
+	Token *token.Token
 	Value string
 }
 
