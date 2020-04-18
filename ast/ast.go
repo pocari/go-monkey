@@ -132,7 +132,7 @@ func (il *IntegerLiteral) TokenLiteral() string {
 	return il.Token.Literal
 }
 func (il *IntegerLiteral) String() string {
-	return string(il.Value)
+	return fmt.Sprintf("%d", il.Value)
 }
 
 type PrefixExpression struct {
