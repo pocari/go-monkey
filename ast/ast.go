@@ -122,7 +122,7 @@ func (es *ExpressionStatement) String() string {
 }
 
 type IntegerLiteral struct {
-	Token token.Token
+	Token *token.Token
 	Value int64
 }
 

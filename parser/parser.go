@@ -5,6 +5,7 @@ import (
 	"monkey/ast"
 	"monkey/lexer"
 	"monkey/token"
+	"strconv"
 )
 
 const (
@@ -43,6 +44,7 @@ func New(l *lexer.Lexer) *Parser {
 	}
 
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 
 	p.nextToken()
 	p.nextToken()
@@ -54,6 +56,10 @@ func (p *Parser) Errors() []string {
 	return p.errors
 }
 
+func (p *Parser) addError(msg string) {
+	p.errors = append(p.errors, msg)
+}
+
 func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
 	p.prefixParseFns[tokenType] = fn
 }
@@ -62,8 +68,7 @@ func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
-	p.errors = append(p.errors, msg)
+	p.addError(fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type))
 }
 
 func (p *Parser) nextToken() {
@@ -181,5 +186,17 @@ func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{
 		Token: p.curToken,
 		Value: p.curToken.Literal,
+	}
+}
+
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		p.addError(fmt.Sprintf("could not parse %q as integer", p.curToken.Literal))
+	}
+
+	return &ast.IntegerLiteral{
+		Token: p.curToken,
+		Value: value,
 	}
 }
