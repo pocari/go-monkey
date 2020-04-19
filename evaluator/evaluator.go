@@ -24,7 +24,8 @@ func Eval(node ast.Node) object.Object {
 	case *ast.Boolean:
 		return nativeBoolToBooleanObject(node.Value)
 	case *ast.PrefixExpression:
-		return evalPrefixExpression(node)
+		right := Eval(node.Right)
+		return evalPrefixExpression(node.Operator, right)
 	}
 	return nil
 }
@@ -47,10 +48,10 @@ func nativeBoolToBooleanObject(value bool) *object.Boolean {
 	}
 }
 
-func evalPrefixExpression(node *ast.PrefixExpression) object.Object {
-	switch node.Operator {
+func evalPrefixExpression(operator string, right object.Object) object.Object {
+	switch operator {
 	case "!":
-		return evalBangOperator(Eval(node.Right))
+		return evalBangOperator(right)
 	default:
 		return NULL
 	}
