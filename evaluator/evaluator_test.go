@@ -262,6 +262,19 @@ func TestFunctionApplication(t *testing.T) {
 	}
 }
 
+func TestClosures(t *testing.T) {
+	input := `
+let newAdder = fn (x) {
+	fn(y) { x + y }
+};
+
+let addTwo = newAdder(2);
+addTwo(3)
+	`
+
+	testIntegerObject(t, testEval(input), 5)
+}
+
 func testEval(input string) object.Object {
 	l := lexer.New(input)
 	p := parser.New(l)
