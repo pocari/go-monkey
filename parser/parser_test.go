@@ -650,3 +650,49 @@ func TestFunctionLiteralParsing(t *testing.T) {
 		return
 	}
 }
+
+func TestFunctionParameterParsing(t *testing.T) {
+	tests := []struct {
+		input          string
+		expectedParams []string
+	}{
+		{"fn() {};", []string{}},
+		{"fn(x) {};", []string{"x"}},
+		{"fn(x,y) {};", []string{"x", "y"}},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := New(l)
+
+		program := p.ParseProgram()
+		checkParseError(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program has not enough statements. got=%d",
+				len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
+				program.Statements[0])
+		}
+
+		exp, ok := stmt.Expression.(*ast.FunctionLiteral)
+		if !ok {
+			t.Fatalf("exp not *ast.FunctionLiteral. got=%T", stmt.Expression)
+		}
+
+		if len(exp.Parameters) != len(tt.expectedParams) {
+			t.Fatalf("exp.Parameters has not enough Parameters. want=%d, got=%d",
+				len(tt.expectedParams), len(exp.Parameters))
+
+		}
+		for i, p := range exp.Parameters {
+			if !testLiteralExpression(t, p, tt.expectedParams[i]) {
+				return
+			}
+		}
+	}
+}
