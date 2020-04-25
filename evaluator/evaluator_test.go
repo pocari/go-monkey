@@ -361,9 +361,10 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`first([1, 2, 3])`, 1},
 		{`last([1, 2, 3])`, 3},
 		{`rest([1, 2, 3])`, []int{2, 3}},
+		{`let a = [1, 2, 3]; push(a, 4);`, []int{1, 2, 3, 4}},
 	}
 
-	for _, tt := range tests {
+	for i, tt := range tests {
 		evaluated := testEval(tt.input)
 		switch expected := tt.expected.(type) {
 		case int:
@@ -371,27 +372,26 @@ func TestBuiltinFunctions(t *testing.T) {
 		case string:
 			errObj, ok := evaluated.(*object.Error)
 			if !ok {
-				t.Errorf("object is not Error. got=%T (%+v)", evaluated, evaluated)
+				t.Errorf("case %d: object is not Error. got=%T (%+v)", i, evaluated, evaluated)
 				continue
 			}
 			if errObj.Message != expected {
-				t.Errorf("wrong error message. expected=%q, got=%q", expected, errObj.Message)
+				t.Errorf("case %d: wrong error message. expected=%q, got=%q", i, expected, errObj.Message)
 			}
 		case []int:
 			array, ok := evaluated.(*object.Array)
 			if !ok {
-				t.Errorf("obj not Array. got=%T (%+v)", evaluated, evaluated)
+				t.Errorf("case %d: obj not Array. got=%T (%+v)", i, evaluated, evaluated)
 				continue
 			}
 
 			if len(array.Elements) != len(expected) {
-				t.Errorf("wrong num of elements. want=%d, got=%d",
-					len(expected), len(array.Elements))
+				t.Errorf("case %d, wrong num of elements. want=%d, got=%d", i, len(expected), len(array.Elements))
 				continue
 			}
 
-			for i, expectedElem := range expected {
-				testIntegerObject(t, array.Elements[i], int64(expectedElem))
+			for j, expectedElem := range expected {
+				testIntegerObject(t, array.Elements[j], int64(expectedElem))
 			}
 		}
 	}
