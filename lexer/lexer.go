@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"bytes"
 	"fmt"
 	"monkey/token"
 )
@@ -33,6 +34,11 @@ func (l *Lexer) NextToken() *token.Token {
 	l.skipWhitespace()
 
 	switch l.ch {
+	case '"':
+		tok = &token.Token{
+			Type:    token.STRING,
+			Literal: l.readString(),
+		}
 	case '=':
 		if l.peekChar() == '=' {
 			ch := l.ch
@@ -173,4 +179,54 @@ func (l *Lexer) peekChar() byte {
 	} else {
 		return l.input[l.readPosition]
 	}
+}
+
+func (l *Lexer) readEscapeChar(position int, buffer *bytes.Buffer) int {
+	l.readChar()
+	switch l.ch {
+	case 'a':
+		buffer.WriteString(fmt.Sprintf("%s\a", l.input[position:l.position-1]))
+	case 'b':
+		buffer.WriteString(fmt.Sprintf("%s\b", l.input[position:l.position-1]))
+	case 'f':
+		buffer.WriteString(fmt.Sprintf("%s\f", l.input[position:l.position-1]))
+	case 'n':
+		buffer.WriteString(fmt.Sprintf("%s\n", l.input[position:l.position-1]))
+	case 'r':
+		buffer.WriteString(fmt.Sprintf("%s\r", l.input[position:l.position-1]))
+	case 't':
+		buffer.WriteString(fmt.Sprintf("%s\t", l.input[position:l.position-1]))
+	case 'v':
+		buffer.WriteString(fmt.Sprintf("%s\v", l.input[position:l.position-1]))
+	case '\\':
+		buffer.WriteString(fmt.Sprintf("%s\\", l.input[position:l.position-1]))
+	case '\'':
+		buffer.WriteString(fmt.Sprintf("%s'", l.input[position:l.position-1]))
+	case '"':
+		buffer.WriteString(fmt.Sprintf("%s\"", l.input[position:l.position-1]))
+	default:
+		// それ以外はバックスラッシュ無視してその文字自体にする
+		buffer.WriteString(fmt.Sprintf("%s%s", l.input[position:l.position-1], string(l.ch)))
+	}
+	return l.position + 1
+}
+
+func (l *Lexer) readString() string {
+	var b bytes.Buffer
+	p := l.position + 1
+
+exit_loop:
+	for {
+		l.readChar()
+		switch l.ch {
+		case '\\':
+			p = l.readEscapeChar(p, &b)
+		default:
+			if l.ch == '"' || l.ch == 0 {
+				break exit_loop
+			}
+		}
+	}
+	b.WriteString(l.input[p:l.position])
+	return b.String()
 }
