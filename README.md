@@ -23,4 +23,17 @@ Feel free to type in command
 15
 >> adder_five(20)
 25
+>> let array_a = [1, 2, 3]
+>> let array_b = push(array_a, 4)
+>> array_b
+[1, 2, 3, 4]
+>> let second = fn(ary) { ary[1] }
+>> second(array_b)
+2
+>> let foo = "hoge"
+>> let foo = "foo"
+>> let hoge = "hoge"
+>> let foo_hoge = foo + "-" + hoge
+>> foo_hoge
+foo-hoge
 ```
