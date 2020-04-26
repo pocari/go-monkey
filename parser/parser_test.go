@@ -333,6 +333,7 @@ func TestParsingInfixExpression(t *testing.T) {
 		{"true == true", true, "==", true},
 		{"true != false", true, "!=", false},
 		{"false != false", false, "!=", false},
+		{"3 % 2", 3, "%", 2},
 	}
 
 	for _, tt := range prefixTests {
@@ -466,6 +467,10 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 		{
 			"add(a * b[2], b[1], 2 * [1, 2][1])",
 			"add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))",
+		},
+		{
+			"1 + 2 % 3",
+			"(1 + (2 % 3))",
 		},
 	}
 
