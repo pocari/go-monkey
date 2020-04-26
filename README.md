@@ -36,4 +36,8 @@ Feel free to type in command
 >> let foo_hoge = foo + "-" + hoge
 >> foo_hoge
 foo-hoge
+>> let people = [{"name": "Alice", "age": 20}, {"name": "Bob", "age": 21}]
+>> puts(people[0]["name"])
+Alice
+null
 ```
