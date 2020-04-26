@@ -40,4 +40,9 @@ foo-hoge
 >> puts(people[0]["name"])
 Alice
 null
+>> let i = 0
+>> while (i < len(people)) { puts(people[i]["age"]); let i = i + 1; }
+20
+21
+null
 ```

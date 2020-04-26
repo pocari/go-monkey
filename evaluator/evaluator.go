@@ -56,6 +56,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return val
 		}
 		env.Set(node.Name.Value, val)
+	case *ast.WhileStatement:
+		return evalWhileStatement(node, env)
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
 	case *ast.FunctionLiteral:
@@ -391,4 +393,25 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Obje
 	}
 
 	return &object.Hash{Pairs: pairs}
+}
+
+func evalWhileStatement(node *ast.WhileStatement, env *object.Environment) object.Object {
+	condition := Eval(node.Condition, env)
+	if isError(condition) {
+		return condition
+	}
+
+	for isTruthy(condition) {
+		result := Eval(node.Body, env)
+		if isError(result) {
+			return result
+		}
+
+		condition = Eval(node.Condition, env)
+		if isError(condition) {
+			return condition
+		}
+	}
+
+	return NULL
 }
