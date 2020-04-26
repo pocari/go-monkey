@@ -1022,3 +1022,52 @@ func TestParsingHashLiteralsWithExpression(t *testing.T) {
 		testFunc(v)
 	}
 }
+
+func TestParsingWhileExpression(t *testing.T) {
+	input := `
+	while (true) {
+		let a = a + 1
+	}
+	`
+
+	l := lexer.New(input)
+	p := New(l)
+
+	program := p.ParseProgram()
+	checkParseError(t, p)
+
+	lenStatements := 1
+	if len(program.Statements) != lenStatements {
+		t.Fatalf("program.Statements does not contain %d statements. got=%d", lenStatements, len(program.Statements))
+	}
+
+	while, ok := program.Statements[0].(*ast.WhileStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.WhileStatement. got=%T", program.Statements[0])
+	}
+
+	cond, ok := while.Condition.(*ast.Boolean)
+	if !ok {
+		t.Fatalf("condition is not ast.Boolean. got=%T", while.Condition)
+	}
+
+	if !cond.Value {
+		t.Errorf("condition is not true")
+	}
+
+	lenBlockStatements := 1
+	if len(while.Body.Statements) != lenBlockStatements {
+		t.Fatalf("while.Body.Statements does not contain %d statements. got=%d", lenBlockStatements, len(while.Body.Statements))
+	}
+
+	bodyLet, ok := while.Body.Statements[0].(*ast.LetStatement)
+	if !ok {
+		t.Fatalf("while.Body.Statements[0] is not ast.LetStatemet. got=%T", while.Body.Statements[0])
+	}
+
+	if bodyLet.Name.Value != "a" {
+		t.Errorf("bodyLet.Name has wrong value. got=%q", bodyLet.Name.Value)
+	}
+
+	testInfixExpression(t, bodyLet.Value, "a", "+", 1)
+}
