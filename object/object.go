@@ -24,12 +24,12 @@ const (
 	BOOLEAN_OBJ      = "BOOLEAN"
 	NULL_OBJ         = "NULL"
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
-	ERROR_OBJ        = "ERROR_OBJ"
-	FUNCTION_OBJ     = "FUNCTION_OBJ"
-	STRING_OBJ       = "STRING_OBJ"
-	BUILTIN_OBJ      = "BUILTIN_OBJ"
-	ARRAY_OBJ        = "ARRAY_OBJ"
-	HASH_OBJ         = "HASH_OBJ"
+	ERROR_OBJ        = "ERROR"
+	FUNCTION_OBJ     = "FUNCTION"
+	STRING_OBJ       = "STRING"
+	BUILTIN_OBJ      = "BUILTIN"
+	ARRAY_OBJ        = "ARRAY"
+	HASH_OBJ         = "HASH"
 )
 
 type Object interface {
@@ -192,7 +192,7 @@ type Hash struct {
 	Pairs map[HashKey]HashPair
 }
 
-func (h *Hash) Type() ObjectType { return ARRAY_OBJ }
+func (h *Hash) Type() ObjectType { return HASH_OBJ }
 func (h *Hash) Inspect() string {
 	var out bytes.Buffer
 
