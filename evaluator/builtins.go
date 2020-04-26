@@ -1,23 +1,17 @@
 package evaluator
 
-import "monkey/object"
+import (
+	"fmt"
+	"monkey/object"
+)
 
 var builtins = map[string]*object.Builtin{
-	"len": &object.Builtin{
-		Fn: builtinLen,
-	},
-	"first": &object.Builtin{
-		Fn: builtinFirst,
-	},
-	"last": &object.Builtin{
-		Fn: builtinLast,
-	},
-	"push": &object.Builtin{
-		Fn: builtinPush,
-	},
-	"rest": &object.Builtin{
-		Fn: builtinRest,
-	},
+	"len":   {Fn: builtinLen},
+	"first": {Fn: builtinFirst},
+	"last":  {Fn: builtinLast},
+	"push":  {Fn: builtinPush},
+	"rest":  {Fn: builtinRest},
+	"puts":  {Fn: builtinPuts},
 }
 
 func builtinLen(args ...object.Object) object.Object {
@@ -103,4 +97,11 @@ func builtinPush(args ...object.Object) object.Object {
 	default:
 		return newError("argument to `push` not supported, got %s", args[0].Type())
 	}
+}
+
+func builtinPuts(args ...object.Object) object.Object {
+	for _, arg := range args {
+		fmt.Println(arg.Inspect())
+	}
+	return NULL
 }
