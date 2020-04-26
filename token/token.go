@@ -21,6 +21,7 @@ const (
 	BANG     = "!"
 	ASTERISK = "*"
 	SLASH    = "/"
+	PERSENT  = "%"
 
 	LT     = "<"
 	GT     = ">"
