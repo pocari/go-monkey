@@ -42,6 +42,7 @@ if (5 < 10) {
 {"foo": "bar"}
 while (false) { let a = a + 1 }
 3 % 2;
+c1
 `
 
 	tests := []struct {
@@ -162,6 +163,7 @@ while (false) { let a = a + 1 }
 		{token.PERSENT, "%"},
 		{token.INT, "2"},
 		{token.SEMICOLON, ";"},
+		{token.IDENT, "c1"},
 		{token.EOF, ""},
 	}
 
