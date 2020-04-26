@@ -40,6 +40,7 @@ if (5 < 10) {
 "foo\cbar"
 [1, 2];
 {"foo": "bar"}
+while (false) { let a = a + 1 }
 `
 
 	tests := []struct {
@@ -143,6 +144,20 @@ if (5 < 10) {
 		{token.COLON, ":"},
 		{token.STRING, "bar"},
 		{token.RBRACE, "}"},
+
+		{token.WHILE, "while"},
+		{token.LPAREN, "("},
+		{token.FALSE, "false"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.LET, "let"},
+		{token.IDENT, "a"},
+		{token.ASSIGN, "="},
+		{token.IDENT, "a"},
+		{token.PLUS, "+"},
+		{token.INT, "1"},
+		{token.RBRACE, "}"},
+
 		{token.EOF, ""},
 	}
 
